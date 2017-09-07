@@ -5,13 +5,13 @@ import tushare_proxy as tsp
 
 class TestTrading(unittest.TestCase):
     def set_data(self):
-        self.code = '600848'
+        self.code = '150118'
         self.start = '2014-11-03'
         self.end = '2014-11-07'
 
     def test_tickData(self):
         self.set_data()
-        hist = tsp.get_h_data(self.code)
+        hist = tsp.get_h_data(self.code, index=True)
         print(hist)
 
     # def test_trade_cal(self):

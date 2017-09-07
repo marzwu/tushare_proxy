@@ -55,13 +55,14 @@ def get_h_data(code, start=None, end=None, autype='qfq',
     if os.path.exists(filename):
         text = open(filename, encoding='GBK').read()
         text = text.replace('--', '')
-        hist = pd.read_csv(StringIO(text), dtype={'code': 'object'})
+        hist = pd.read_csv(StringIO(text), dtype={'date': 'object'})
+        hist['date'] = hist['date'].astype('datetime')
         hist = hist.set_index('date')
     else:
         try:
             hist = ts.get_h_data(code, start, end, autype, index, retry_count, pause, drop_factor)
         except Exception as e:
-            return None
+            raise e
 
         hist.to_csv(filename)
     return hist
