@@ -49,7 +49,8 @@ def clear_cache():
 
 def get_h_data(code, start=None, end=None, autype='qfq',
                index=False, retry_count=3, pause=0.001, drop_factor=True):
-    filename = '_'.join([code, str(start), str(end), autype, str(index), str(drop_factor), str(datetime.date.today())])
+    filename = '_'.join(
+        ['get_h_data', code, str(start), str(end), autype, str(index), str(drop_factor), str(datetime.date.today())])
     filename = get_cache_path() + os.path.sep + filename + '.csv'
     if os.path.exists(filename):
         text = open(filename, encoding='GBK').read()

@@ -1,5 +1,7 @@
 import unittest
-import tushare_proxy
+
+import tushare_proxy as tsp
+
 
 class TestTrading(unittest.TestCase):
     def set_data(self):
@@ -9,8 +11,12 @@ class TestTrading(unittest.TestCase):
 
     def test_tickData(self):
         self.set_data()
-        hist = tushare_proxy.get_h_data(self.code)
+        hist = tsp.get_h_data(self.code)
         print(hist)
+
+    # def test_trade_cal(self):
+    #     hist = tsp.trade_cal()
+    #     print(hist)
 
     # def test_clear_cache(self):
     #     tushare_proxy.clear_cache()
@@ -19,6 +25,7 @@ class TestTrading(unittest.TestCase):
     # def test_histData(self):
     #     self.set_data()
     #     td.get_hist_data(self.code, start=self.start, end=self.end)
+
 
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
