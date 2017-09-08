@@ -1,6 +1,9 @@
 import datetime
 import os
-
+import winreg
+import requests
+import json
+import random
 import pandas as pd
 import tushare as ts
 from easyutils import get_stock_type
@@ -60,9 +63,27 @@ def get_h_data(code, start=None, end=None, autype='qfq',
         hist = hist.set_index('date')
     else:
         try:
+            r = requests.get('http://127.0.0.1:8000/?types=0&country=国内')
+            # r = requests.get('http://127.0.0.1:8000')
+            ip_ports = json.loads(r.text)
+            id = random.randint(0, len(ip_ports) - 1)
+            ip = ip_ports[id][0]
+            port = ip_ports[id][1]
+
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                                 r"Software\Microsoft\Windows\CurrentVersion\Internet Settings", 0,
+                                 winreg.KEY_ALL_ACCESS)
+            print("proxy")
+            winreg.SetValueEx(key, "ProxyEnable", 0, winreg.REG_DWORD, 1)
+            winreg.SetValueEx(key, "ProxyServer", 0, winreg.REG_SZ, "{}:{}".format(ip, port))
+            winreg.SetValueEx(key, "ProxyOverride", 0, winreg.REG_SZ, "localhost;127.0.0.1")
+
             hist = ts.get_h_data(code, start, end, autype, index, retry_count, pause, drop_factor)
         except Exception as e:
             raise e
+        finally:
+            print("disable proxy")
+            winreg.SetValueEx(key, "ProxyEnable", 0, winreg.REG_DWORD, 0)
 
         hist.to_csv(filename)
     return hist
