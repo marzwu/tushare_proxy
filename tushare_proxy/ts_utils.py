@@ -56,7 +56,7 @@ def get_h_data(code, start=None, end=None, autype='qfq',
         text = open(filename, encoding='GBK').read()
         text = text.replace('--', '')
         hist = pd.read_csv(StringIO(text), dtype={'date': 'object'})
-        hist['date'] = hist['date'].astype('datetime')
+        hist['date'] = pd.to_datetime(hist['date'])
         hist = hist.set_index('date')
     else:
         try:
