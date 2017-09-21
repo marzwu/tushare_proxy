@@ -1,9 +1,6 @@
 import datetime
 import os
-import winreg
-import requests
-import json
-import random
+
 import pandas as pd
 import tushare as ts
 from easyutils import get_stock_type
@@ -33,21 +30,28 @@ def get_settlement(hist):
     return settlement
 
 
-def get_stock_basics():
-    """获取A股所有股票基本信息，如果服务器不好用则从文件读取"""
-    try:
-        basics = ts.get_stock_basics()
-        basics.to_csv('d:/analyze_data/all.csv')
-    except:
-        text = open('d:/analyze_data/all.csv', encoding='GBK').read()
-        text = text.replace('--', '')
-        df = pd.read_csv(StringIO(text), dtype={'code': 'object'})
-        basics = df.set_index('code')
-    return basics
-
-
 def clear_cache():
     __import__('shutil').rmtree(get_cache_path())
+
+
+def get_stock_basics():
+    """获取A股所有股票基本信息，如果服务器不好用则从文件读取"""
+    filename = '_'.join(['get_stock_basics', str(datetime.date.today())])
+    filename = get_cache_path() + os.path.sep + filename + '.csv'
+
+    if os.path.exists(filename):
+        text = open(filename, encoding='GBK').read()
+        text = text.replace('--', '')
+        hist = pd.read_csv(StringIO(text), dtype={'code': 'object'})
+        hist = hist.set_index('code')
+    else:
+        try:
+            hist = ts.get_stock_basics()
+            hist.to_csv(filename)
+        except Exception as e:
+            hist = None
+            print(e)
+    return hist
 
 
 def get_h_data(code, start=None, end=None, autype='qfq',
